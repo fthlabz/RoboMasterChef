@@ -1,0 +1,48 @@
+[
+    {
+        "id": "trk001",
+        "title": "Sucuklu Kuru Fasulye",
+        "category": "Türk Mutfağı",
+        "prepTime": "15 dk",
+        "cookTime": "1 sa 20 dk",
+        "portions": "4 Porsiyon",
+        "image": "",
+        "ingredients": [
+            { "name": "Kuru fasulye (dermason)", "amount": "200 g" },
+            { "name": "Su", "amount": "2550 g" },
+            { "name": "Soğan", "amount": "120 g" },
+            { "name": "Tereyağı", "amount": "40 g" },
+            { "name": "Sucuk", "amount": "70 g" }
+        ],
+        "steps": [
+            "Fasulyeleri 1 gece ıslatın. Süzdürüp kenara kaldırın.",
+            "Soğan ve tereyağını karıştırma kabına koyun. 3 sn/hız 6'da doğrayın. Spatula ile sıyırıp 7 dk/100°C/{{kasik_hizi}}'nda pişirin.",
+            "Domatesi ekleyip 5 sn/hız 7'de karıştırın.",
+            "Süzgeci karıştırma kabına yerleştirip fasulyeleri ekleyin. 65 dk/{{varoma}}/hız 1'de pişirin.",
+            "Süzgeci çıkarıp fasulyeleri kaseye aktarın. Sucukları ekleyip 15 dk/120°C/{{ters_bicak}}/{{kasik_hizi}}'nda pişirin."
+        ],
+        "nutrition": {
+            "kalori": "198 kcal",
+            "protein": "6.1 g"
+        }
+    },
+    {
+        "id": "trk002",
+        "title": "Bamya Yahnisi",
+        "category": "Türk Mutfağı",
+        "prepTime": "10 dk",
+        "cookTime": "1 sa",
+        "portions": "4 Porsiyon",
+        "image": "",
+        "ingredients": [
+            { "name": "Taze bamya", "amount": "1000 g" },
+            { "name": "Dana eti, kemiksiz", "amount": "300 g" },
+            { "name": "Zeytinyağı", "amount": "60 g" }
+        ],
+        "steps": [
+            "{{varoma}} tabağını yerine yerleştirip bamyaları içinde tartın. Kenara koyun.",
+            "Sarımsak, soğan ve zeytinyağını koyup 3 sn/hız 5'te doğrayın ve soteleyin.",
+            "Et, tuz ve karabiberi ekleyip 10 dk/120°C/{{ters_bicak}}'ta pişirin."
+        ]
+    }
+]
