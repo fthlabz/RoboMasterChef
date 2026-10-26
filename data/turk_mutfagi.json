@@ -1,35 +1,39 @@
-{
-    "id": "trk_sucuklu_fasulye",
-    "title": "Sucuklu Kuru Fasulye",
-    "category": "Türk Mutfağı",
-    "prepTime": "20 dk",
-    "cookTime": "1 sa 30 dk",
-    "portions": "4 Porsiyon",
-    "image": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=800&auto=format&fit=crop",
-    "nutrition": {
-        "kalori": "198.1 kcal",
-        "protein": "6.1 g",
-        "karbonhidrat": "9.5 g",
-        "yag": "15.9 g"
-    },
-    "ingredients": [
-        { "name": "Kuru fasulye (dermason cinsi)", "amount": "200 g" },
-        { "name": "Su", "amount": "2550 g" },
-        { "name": "Biber salçası", "amount": "25 g" },
-        { "name": "Soğan (ikiye bölünmüş)", "amount": "120 g" },
-        { "name": "Tereyağı (küp küp kesilmiş)", "amount": "40 g" },
-        { "name": "Domates (parçalara bölünmüş veya konserve)", "amount": "200 g" },
-        { "name": "Tuz (damak tadına göre)", "amount": "3/4 tk" },
-        { "name": "Karabiber", "amount": "1/4 tk" },
-        { "name": "Şeker", "amount": "1/2 tk" },
-        { "name": "Sucuk (yarım ay şeklinde dilimlenmiş)", "amount": "70 g" }
-    ],
-    "steps": [
-        "Karıştırma kabı kapağına geniş bir kase koyup içinde 200 g dermason fasulye ve 1500 g suyu tartın. Fasulyeleri 1 gece (yaklaşık 8-10 saat) ıslatın. Fasulyeleri süzdürüp durulayın ve kenara kaldırın.",
-        "Soğan, tereyağı ve salçayı karıştırma kabına koyun. 3 saniye / {{hiz_6}} ayarında doğrayın. Karıştırma kabının kenarlarını spatula ile sıyırıp 7 dakika / 100°C / {{kasik_hizi}} ayarında pişirin.",
-        "Domatesi ekleyip 5 saniye / {{hiz_7}} ayarında karıştırın.",
-        "Tuz, karabiber, şeker ve 900 g suyu karıştırma kabına ekleyin. Pişirme sepetini ({{ic_sepet}}) karıştırma kabına yerleştirip fasulyeleri sepete koyun. 65 dakika / {{buhar_unitesi}} / {{hiz_1}} ayarında pişirin.",
-        "Pişirme sepetini spatula yardımıyla çıkarıp fasulyeleri bir kaseye aktarın. Sucuk, 150 g su ve kasedeki fasulyeleri dikkatli bir şekilde karıştırma kabına ekleyip 15 dakika / 120°C / {{ters_bicak}} / {{kasik_hizi}} ayarında pişirin.",
-        "Tuzunu ve biberini damak tadınıza göre ayarlayıp sıcak olarak servis edin."
-    ]
-}
+[
+    {
+        "id": "trk_sucuklu_fasulye",
+        "title": "Sucuklu Kuru Fasulye",
+        "category": "Türk Mutfağı",
+        "prepTime": "20 dk",
+        "cookTime": "1 sa 30 dk",
+        "portions": "4 Porsiyon",
+        "image": "",
+        "nutrition": {
+            "kalori": "198.1 kcal",
+            "protein": "6.1 g",
+            "karbonhidrat": "9.5 g",
+            "yağ": "15.9 g",
+            "sodyum": "688.8 mg",
+            "lif": "2.5 g"
+        },
+        "ingredients": [
+            { "name": "Kuru fasulye (dermason cinsi)", "amount": "200 g" },
+            { "name": "Su", "amount": "2550 g" },
+            { "name": "Biber salçası", "amount": "25 g" },
+            { "name": "Soğan (ikiye bölünmüş)", "amount": "120 g" },
+            { "name": "Tereyağı (küp küp kesilmiş)", "amount": "40 g" },
+            { "name": "Domates (parçalara bölünmüş)", "amount": "200 g" },
+            { "name": "Tuz (damak tadına göre)", "amount": "3/4 tk" },
+            { "name": "Karabiber", "amount": "1/4 tk" },
+            { "name": "Şeker", "amount": "1/2 tk" },
+            { "name": "Sucuk (yarım ay şeklinde dilimlenmiş)", "amount": "70 g" }
+        ],
+        "steps": [
+            "Karıştırma kabı kapağına geniş bir kase koyup içinde 200 g dermason fasulye ve 1500 g suyu tartın. Fasulyeleri 1 gece (yaklaşık 8-10 saat) ıslatın. Fasulyeleri süzdürüp durulayın ve kenara kaldırın.",
+            "Soğan, tereyağı ve salçayı karıştırma kabına koyun. 3 saniye / {{hiz_6}}'da doğrayın. Karıştırma kabının kenarlarını spatula ile sıyırıp 7 dakika / 100°C / {{kasik_hizi}}'nde pişirin.",
+            "Domatesi ekleyip 5 saniye / {{hiz_7}}'de karıştırın.",
+            "Tuz, karabiber, şeker ve 900 g suyu karıştırma kabına ekleyin. Pişirme sepetini ({{ic_sepet}}) karıştırma kabına yerleştirip fasulyeleri sepete koyun. 65 dakika / {{buhar_unitesi}} / {{hiz_1}}'de pişirin.",
+            "Pişirme sepetini spatula yardımıyla çıkarıp fasulyeleri bir kaseye aktarın. Sucuk, 150 g su ve kasedeki fasulyeleri dikkatli bir şekilde karıştırma kabına ekleyip 15 dakika / 120°C / {{ters_bicak}} / {{kasik_hizi}}'nda pişirin.",
+            "Tuzunu ve biberini damak tadınıza göre ayarlayıp sıcak olarak servis edin."
+        ]
+    }
+]
