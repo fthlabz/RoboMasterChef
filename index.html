@@ -7,14 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* Modern Koyu Tema & Arka Plan Derinliği */
+        /* Premium Koyu Tema - Apple Glassmorphism */
         body { 
             background: radial-gradient(circle at top left, #1a1a24 0%, #0d0d12 100%); 
             color: #f3f4f6; 
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
         }
         
-        /* Apple Glassmorphism Efekti */
         .glass-panel { 
             background: rgba(255, 255, 255, 0.03); 
             backdrop-filter: blur(20px); 
@@ -31,15 +30,11 @@
             transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), background 0.2s ease;
         }
         
-        .glass-card:active {
-            transform: scale(0.97);
-            background: rgba(255, 255, 255, 0.06);
-        }
+        .glass-card:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.06); }
 
         .neon-text { color: #00E676; }
         .neon-bg { background-color: #00E676; color: #000; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); }
 
-        /* Yağ Gibi Akan Sayfa Geçişi */
         #recipe-detail { 
             transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); 
             transform: translateX(100%); 
@@ -48,12 +43,15 @@
         
         .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.25rem; }
         .list-view { display: flex; flex-direction: column; gap: 1.25rem; }
+        
+        /* Kaydırma Çubuklarını Gizle ama Kaydırmaya İzin Ver */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="antialiased h-screen overflow-hidden flex flex-col pb-safe">
 
-    <!-- Premium Üst Bar -->
+    <!-- Üst Bar ve Yatay Kaydırılabilir Cihaz Menüsü -->
     <header class="glass-panel z-10 flex flex-col pt-12 pb-4 px-5 shrink-0 rounded-b-3xl relative">
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -61,17 +59,17 @@
             </h1>
         </div>
         
-        <!-- Dolgun Cihaz Seçim Butonları -->
-        <div class="flex bg-black/40 rounded-2xl p-1.5 border border-white/10 w-full relative">
-            <button id="btn-thermomix" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all" onclick="setDevice('thermomix')">Thermomix</button>
-            <button id="btn-beko" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all" onclick="setDevice('beko')">Beko ThermoExpert</button>
+        <!-- Yana kaydırılabilir cihaz seçici -->
+        <div class="flex bg-black/40 rounded-2xl p-1.5 border border-white/10 w-full overflow-x-auto hide-scrollbar gap-1 relative snap-x">
+            <button id="btn-thermomix" class="snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all" onclick="setDevice('thermomix')">Thermomix</button>
+            <button id="btn-beko" class="snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all" onclick="setDevice('beko')">Beko 8491</button>
+            <button id="btn-fakir" class="snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all" onclick="setDevice('fakir')">Fakir</button>
+            <button id="btn-arzum" class="snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all" onclick="setDevice('arzum')">Arzum</button>
         </div>
     </header>
 
-    <!-- Ana Ekran (Arama ve Listeleme) -->
+    <!-- Ana Ekran (Arama & Listeler) -->
     <main id="main-view" class="flex-1 overflow-y-auto p-5 hide-scrollbar relative">
-        
-        <!-- Dolgun Arama Çubuğu -->
         <div class="mb-6 flex gap-3 sticky top-0 z-10 pt-2">
             <div class="relative flex-1">
                 <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-xl"></i>
@@ -81,72 +79,109 @@
                 <i id="view-icon" class="ph ph-squares-four text-gray-300"></i>
             </button>
         </div>
-
-        <div id="recipe-container" class="grid-view pb-20">
-            <!-- Tarifler JSON'dan Basılacak -->
+        
+        <!-- Yükleniyor Göstergesi -->
+        <div id="loading-indicator" class="text-center py-10 text-gray-400">
+            <i class="ph ph-spinner animate-spin text-3xl neon-text mb-2"></i>
+            <p class="text-sm font-medium">Tarifler Yükleniyor...</p>
         </div>
+
+        <div id="recipe-container" class="grid-view pb-20 hidden"></div>
     </main>
 
-    <!-- Ferah ve Geniş Tarif Detay Sayfası -->
+    <!-- Tarif Detay Sayfası -->
     <div id="recipe-detail" class="fixed inset-0 bg-[#0d0d12]/95 backdrop-blur-2xl z-50 flex flex-col h-full overflow-hidden">
-        
-        <!-- Detay Sayfası Üst Bar -->
         <div class="glass-panel pt-12 pb-4 px-4 flex items-center gap-4 shrink-0 rounded-b-3xl">
             <button onclick="closeRecipe()" class="glass-card p-2.5 rounded-full text-2xl"><i class="ph ph-caret-left"></i></button>
             <h2 id="detail-title" class="text-xl font-bold flex-1 truncate tracking-tight">Tarif Adı</h2>
         </div>
-        
-        <!-- Detay İçeriği (Geniş Yazılar, Ferah Aralıklar) -->
-        <div class="flex-1 overflow-y-auto p-5 hide-scrollbar" id="detail-content">
-            <!-- Detaylar Buraya Gelecek -->
-        </div>
+        <div class="flex-1 overflow-y-auto p-5 hide-scrollbar" id="detail-content"></div>
     </div>
 
     <script>
+        // OTO-ALGILAMA SİSTEMİ (İleride aklınıza gelebilecek tüm JSON isimleri)
+        const possibleCategories = [
+            'data/turk_mutfagi.json', 'data/italyan_mutfagi.json', 'data/fransiz_mutfagi.json', 
+            'data/asya_mutfagi.json', 'data/meksika_mutfagi.json', 'data/dunya_mutfagi.json', 
+            'data/hamur_isleri.json', 'data/tatlilar.json', 'data/icecekler.json', 
+            'data/corbalar.json', 'data/salatalar.json', 'data/et_yemekleri.json', 
+            'data/zeytinyaglilar.json', 'data/saglikli_yasam.json', 'data/bebek_mamalari.json', 
+            'data/soslar.json', 'data/seflerden_ozel.json', 'data/meze.json',
+            'data/deniz_urunleri.json', 'data/vegan_tarifler.json', 'data/glutensiz.json',
+            'data/kahvaltilik.json', 'data/pratik_tarifler.json', 'data/kislik_hazirliklar.json'
+        ];
+
         let currentDevice = 'thermomix';
         let isGridView = true;
         let allRecipes = [];
 
-        // Yeni, Kapsamlı Cihaz Sözlüğü
+        // 4 MARKAYI DA DESTEKLEYEN DEV SÖZLÜK
         const dictionary = {
             thermomix: { 
                 "{{buhar_unitesi}}": "Varoma", 
                 "{{ic_sepet}}": "Süzgeç", 
                 "{{ters_bicak}}": "Ters Bıçak", 
                 "{{kasik_hizi}}": "Kaşık Hızı",
-                "{{cirpici}}": "Kelebek Çırpıcı"
+                "{{cirpici}}": "Kelebek Çırpıcı",
+                "{{sote_bicagi}}": "Bıçak Kılıfı",
+                "{{olcu_kabi}}": "Ölçü Kabı",
+                "{{spatula}}": "Spatula"
             },
             beko: { 
                 "{{buhar_unitesi}}": "Buhar Sepeti", 
                 "{{ic_sepet}}": "Pişirme Sepeti", 
                 "{{ters_bicak}}": "Ters Dönüş", 
                 "{{kasik_hizi}}": "Hız 1",
-                "{{cirpici}}": "Çırpma Aparatı"
+                "{{cirpici}}": "Çırpma Aparatı",
+                "{{sote_bicagi}}": "Sote Bıçağı",
+                "{{olcu_kabi}}": "Ölçü Kapağı",
+                "{{spatula}}": "Spatula"
+            },
+            fakir: { 
+                "{{buhar_unitesi}}": "Buhar Tepsisi", 
+                "{{ic_sepet}}": "Haşlama Sepeti", 
+                "{{ters_bicak}}": "Ters İşlem", 
+                "{{kasik_hizi}}": "Düşük Hız",
+                "{{cirpici}}": "Çırpıcı",
+                "{{sote_bicagi}}": "Bıçak Koruyucu",
+                "{{olcu_kabi}}": "Ölçü Bardağı",
+                "{{spatula}}": "Spatula"
+            },
+            arzum: { 
+                "{{buhar_unitesi}}": "Buhar Aparatı", 
+                "{{ic_sepet}}": "Pişirme Haznesi", 
+                "{{ters_bicak}}": "Ters Yön", 
+                "{{kasik_hizi}}": "Yavaş Karıştırma",
+                "{{cirpici}}": "Mikser Aparatı",
+                "{{sote_bicagi}}": "Bıçak Kapağı",
+                "{{olcu_kabi}}": "Ölçüm Kabı",
+                "{{spatula}}": "Spatula"
             }
         };
 
         const icons = {
-            thermomix: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-arrow-up neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-basket neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrows-left-right neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-spoon neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-spiral neon-text text-xl'></i>" },
-            beko: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-sun neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-shopping-cart-simple neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrow-u-down-left neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-number-circle-one neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-tornado neon-text text-xl'></i>" }
+            thermomix: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-arrow-up neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-basket neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrows-left-right neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-spoon neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-spiral neon-text text-xl'></i>", "{{sote_bicagi}}": "<i class='ph-fill ph-shield-check neon-text text-xl'></i>", "{{olcu_kabi}}": "<i class='ph-fill ph-brandy neon-text text-xl'></i>", "{{spatula}}": "<i class='ph-fill ph-paint-roller neon-text text-xl'></i>" },
+            beko: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-sun neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-shopping-cart-simple neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrow-u-down-left neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-number-circle-one neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-tornado neon-text text-xl'></i>", "{{sote_bicagi}}": "<i class='ph-fill ph-sword neon-text text-xl'></i>", "{{olcu_kabi}}": "<i class='ph-fill ph-brandy neon-text text-xl'></i>", "{{spatula}}": "<i class='ph-fill ph-paint-roller neon-text text-xl'></i>" },
+            fakir: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-fog neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-tote neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrows-clockwise neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-wind neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-spinner neon-text text-xl'></i>", "{{sote_bicagi}}": "<i class='ph-fill ph-shield-warning neon-text text-xl'></i>", "{{olcu_kabi}}": "<i class='ph-fill ph-cup neon-text text-xl'></i>", "{{spatula}}": "<i class='ph-fill ph-ruler neon-text text-xl'></i>" },
+            arzum: { "{{buhar_unitesi}}": "<i class='ph-fill ph-waves neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-bowl-food neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrow-counter-clockwise neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-leaf neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-intersect neon-text text-xl'></i>", "{{sote_bicagi}}": "<i class='ph-fill ph-lock-key neon-text text-xl'></i>", "{{olcu_kabi}}": "<i class='ph-fill ph-drop neon-text text-xl'></i>", "{{spatula}}": "<i class='ph-fill ph-magic-wand neon-text text-xl'></i>" }
         };
 
-        const dataFiles = ['data/turk_mutfagi.json'];
-
+        // HİÇ DOKUNMADAN JSON OKUYAN MİMARİ
         async function loadRecipes() {
             allRecipes = [];
-            for (let file of dataFiles) {
-                try {
-                    const response = await fetch(file);
-                    const data = await response.json();
-                    allRecipes = allRecipes.concat(data);
-                } catch (error) {
-                    console.log(file + " henüz eklenmedi.");
-                }
-            }
+            const fetchPromises = possibleCategories.map(file => 
+                fetch(file).then(res => res.ok ? res.json() : []).catch(() => [])
+            );
+            
+            const results = await Promise.all(fetchPromises);
+            results.forEach(data => { if(data.length > 0) allRecipes = allRecipes.concat(data); });
+            
+            document.getElementById('loading-indicator').classList.add('hidden');
+            document.getElementById('recipe-container').classList.remove('hidden');
             renderRecipes(allRecipes);
         }
 
-        // Akıllı Arama
+        // AKILLI ARAMA ALGORİTMASI
         function getEditDistance(a, b) {
             if (a.length === 0) return b.length;
             if (b.length === 0) return a.length;
@@ -173,13 +208,19 @@
             renderRecipes(filtered);
         });
 
+        // 4 CİHAZ ARASI GEÇİŞ
         function setDevice(device) {
             currentDevice = device;
-            const activeClass = "flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all";
-            const inactiveClass = "flex-1 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all";
+            const devices = ['thermomix', 'beko', 'fakir', 'arzum'];
             
-            document.getElementById('btn-thermomix').className = device === 'thermomix' ? activeClass : inactiveClass;
-            document.getElementById('btn-beko').className = device === 'beko' ? activeClass : inactiveClass;
+            devices.forEach(d => {
+                const btn = document.getElementById(`btn-${d}`);
+                if (d === device) {
+                    btn.className = "snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all";
+                } else {
+                    btn.className = "snap-start flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all";
+                }
+            });
             
             if(document.getElementById('recipe-detail').classList.contains('active')) {
                 const currentId = document.getElementById('recipe-detail').getAttribute('data-id');
@@ -196,14 +237,24 @@
             renderRecipes(allRecipes);
         }
 
+        // AKILLI ÇEVİRİ MOTORU (Aparatlar ve Hızlar)
         function translateText(text) {
             let translated = text;
             const dict = dictionary[currentDevice];
             const iconDict = icons[currentDevice];
+            
+            // 1. Sabit aparat çevirisi (Buhar Sepeti vb.)
             for (const key in dict) {
                 const regex = new RegExp(key, "g");
                 translated = translated.replace(regex, `<span class="font-bold text-white bg-white/10 px-2 py-0.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm mx-1">${iconDict[key]} ${dict[key]}</span>`);
             }
+            
+            // 2. Dinamik Hız Seviyelerini Çevir ({{hiz_1}}'den {{hiz_10}}'a kadar)
+            // Hız ikonunun rengini cihaza göre hafif değiştirebiliriz ama genel olarak neon-text şık durur.
+            const speedRegex = /\{\{hiz_([1-9]|10)\}\}/g;
+            const fanIcon = "<i class='ph-fill ph-fan neon-text text-xl animate-[spin_2s_linear_infinite]'></i>";
+            translated = translated.replace(speedRegex, `<span class="font-bold text-white bg-white/10 px-2 py-0.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm mx-1">${fanIcon} Hız $1</span>`);
+
             return translated;
         }
 
@@ -212,7 +263,7 @@
             container.innerHTML = '';
             
             if(recipesToRender.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 mt-10 glass-card rounded-3xl p-6">Aradığınız tarif bulunamadı.</div>`;
+                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 mt-10 glass-card rounded-3xl p-6">Şu an aktif bir tarif bulunamadı. Lütfen "data" klasörüne JSON ekleyin.</div>`;
                 return;
             }
 
@@ -285,6 +336,7 @@
             document.getElementById('recipe-detail').classList.remove('active');
         }
 
+        // Sistemi Başlat
         loadRecipes();
     </script>
 </body>
