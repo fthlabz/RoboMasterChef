@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>RoboMasterChef - ThermoExpert</title>
+    <title>RoboMasterChef - Beko ThermoExpert</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* Beko ThermoExpert Kurumsal Koyu Tasarım Dili */
         body { 
-            /* Derin Antrasit ve Lacivert Tonları */
             background: radial-gradient(circle at top left, #1f2937 0%, #111827 100%); 
             color: #f3f4f6; 
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
@@ -26,12 +24,9 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), background 0.2s ease, border 0.2s ease;
         }
-        .glass-card:hover {
-            border: 1px solid rgba(0, 181, 226, 0.3);
-        }
+        .glass-card:hover { border: 1px solid rgba(0, 181, 226, 0.3); }
         .glass-card:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.05); }
         
-        /* Beko Turkuazı / Mavisi */
         .beko-text { color: #00B5E2; }
         .beko-bg { background-color: #00B5E2; color: #ffffff; box-shadow: 0 4px 15px rgba(0, 181, 226, 0.35); }
         
@@ -45,7 +40,7 @@
 </head>
 <body class="antialiased h-screen overflow-hidden flex flex-col pb-safe">
 
-    <!-- Üst Bar (Beko ThermoExpert Odaklı) -->
+    <!-- Üst Bar -->
     <header class="glass-panel z-10 flex flex-col pt-12 pb-4 px-5 shrink-0 rounded-b-3xl relative border-b border-white/5">
         <div class="flex justify-between items-center mb-1">
             <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2 text-white">
@@ -58,15 +53,14 @@
     <!-- Ana Ekran -->
     <main id="main-view" class="flex-1 overflow-y-auto p-5 hide-scrollbar relative">
         
-        <!-- Beko Karşılama Bannerı (Kurumsal Görsel) -->
+        <!-- Beko Karşılama Bannerı -->
         <div class="mb-6 relative rounded-3xl overflow-hidden shadow-2xl glass-card h-48 flex items-center border border-white/10">
-            <!-- Modern ve şık bir akıllı mutfak arka planı -->
             <img src="https://images.unsplash.com/photo-1556910103-1c02745a8281?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
             <div class="absolute inset-0 bg-gradient-to-r from-[#111827]/90 to-transparent"></div>
             <div class="relative z-10 p-6 w-full h-full flex flex-col justify-center">
                 <div class="text-[10px] uppercase tracking-widest beko-text font-bold mb-1">Beko Akıllı Mutfak Robotu</div>
                 <h2 class="text-2xl font-bold text-white mb-2 leading-tight">Lezzetin Ritmi<br>Değişti.</h2>
-                <p class="text-xs text-gray-300 max-w-[60%]">Her tarifte kusursuz lezzeti yakalayın.</p>
+                <p class="text-xs text-gray-300 max-w-[60%]">ThermoExpert SMC 8491 ile kusursuz lezzetler.</p>
             </div>
         </div>
 
@@ -80,7 +74,6 @@
             </button>
         </div>
 
-        <!-- Dinamik Kategoriler -->
         <div id="category-filter" class="flex gap-2 overflow-x-auto hide-scrollbar mb-6 pb-1 snap-x"></div>
         
         <div id="loading-indicator" class="text-center py-10 text-gray-400">
@@ -101,7 +94,6 @@
     </div>
 
     <script>
-        // OTO-ALGILAMA SİSTEMİ (Tüm mutfak kategorileri için hazır)
         const possibleCategories = [
             'data/turk_mutfagi.json', 'data/italyan_mutfagi.json', 'data/fransiz_mutfagi.json', 
             'data/asya_mutfagi.json', 'data/meksika_mutfagi.json', 'data/dunya_mutfagi.json', 
@@ -118,7 +110,6 @@
         let activeCategory = 'Tümü';
         let searchQuery = '';
 
-        // TAMAMEN BEKO THERMOEXPERT SMC 8491'E ÖZEL SÖZLÜK
         const dictionary = { 
             "{{buhar_unitesi}}": "Buhar Sepeti", 
             "{{ic_sepet}}": "Pişirme Sepeti", 
@@ -214,7 +205,6 @@
             applyFilters();
         }
 
-        // BEKO'YA ÖZEL İKONLU VE RENKLİ ÇEVİRİ MOTORU
         function translateText(text) {
             let translated = text;
             for (const key in dictionary) {
@@ -266,12 +256,12 @@
             let nutritionHtml = '';
             if (recipe.nutrition) {
                 nutritionHtml = `
-                    <h3 class="text-lg font-bold mb-3 text-white flex items-center gap-2"><i class="ph-fill ph-heart-vital beko-text"></i> Besin Değerleri</h3>
-                    <div class="glass-card rounded-2xl p-4 mb-8 flex justify-between text-center gap-2 border border-white/5">
-                        <div class="flex-1"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold tracking-wider">Kalori</div><div class="font-bold text-white text-sm">${recipe.nutrition.kalori || '-'}</div></div>
-                        <div class="flex-1"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold tracking-wider">Protein</div><div class="font-bold text-white text-sm">${recipe.nutrition.protein || '-'}</div></div>
-                        <div class="flex-1"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold tracking-wider">Karb.</div><div class="font-bold text-white text-sm">${recipe.nutrition.karbonhidrat || '-'}</div></div>
-                        <div class="flex-1"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold tracking-wider">Yağ</div><div class="font-bold text-white text-sm">${recipe.nutrition.yag || '-'}</div></div>
+                    <h3 class="text-lg font-bold mb-3 text-white flex items-center gap-2"><i class="ph-fill ph-heart-vital beko-text"></i> Besin Değerleri (1 Porsiyon)</h3>
+                    <div class="glass-card rounded-2xl p-4 mb-8 grid grid-cols-2 gap-3 text-center border border-white/5">
+                        <div class="p-2 bg-white/5 rounded-xl"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold">Kalori</div><div class="font-bold text-white text-sm">${recipe.nutrition.kalori || '-'}</div></div>
+                        <div class="p-2 bg-white/5 rounded-xl"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold">Protein</div><div class="font-bold text-white text-sm">${recipe.nutrition.protein || '-'}</div></div>
+                        <div class="p-2 bg-white/5 rounded-xl"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold">Karbonhidrat</div><div class="font-bold text-white text-sm">${recipe.nutrition.karbonhidrat || '-'}</div></div>
+                        <div class="p-2 bg-white/5 rounded-xl"><div class="text-gray-400 text-[10px] uppercase mb-1 font-bold">Yağ</div><div class="font-bold text-white text-sm">${recipe.nutrition.yag || '-'}</div></div>
                     </div>
                 `;
             }
