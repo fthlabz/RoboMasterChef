@@ -2,60 +2,102 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RoboMasterChef - Akıllı Tarif Asistanı</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>RoboMasterChef</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        body { background-color: #121212; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        .glass-card { background: rgba(30, 30, 30, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .neon-accent { color: #00E676; }
-        .bg-neon { background-color: #00E676; color: #000; }
-        /* Tarif Detay Sayfası Animasyonu */
-        #recipe-detail { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        /* Modern Koyu Tema & Arka Plan Derinliği */
+        body { 
+            background: radial-gradient(circle at top left, #1a1a24 0%, #0d0d12 100%); 
+            color: #f3f4f6; 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        }
+        
+        /* Apple Glassmorphism Efekti */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), background 0.2s ease;
+        }
+        
+        .glass-card:active {
+            transform: scale(0.97);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .neon-text { color: #00E676; }
+        .neon-bg { background-color: #00E676; color: #000; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); }
+
+        /* Yağ Gibi Akan Sayfa Geçişi */
+        #recipe-detail { 
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); 
+            transform: translateX(100%); 
+        }
         #recipe-detail.active { transform: translateX(0); }
-        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
-        .list-view { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.25rem; }
+        .list-view { display: flex; flex-direction: column; gap: 1.25rem; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased h-screen overflow-hidden flex flex-col">
+<body class="antialiased h-screen overflow-hidden flex flex-col pb-safe">
 
-    <!-- Üst Bar & Cihaz Seçimi -->
-    <header class="p-4 glass-card z-10 flex justify-between items-center shadow-lg shrink-0">
-        <h1 class="text-xl font-bold flex items-center gap-2"><i class="ph ph-cooking-pot neon-accent text-3xl"></i> RoboChef</h1>
-        <div class="flex bg-gray-800 rounded-full p-1 border border-gray-700">
-            <button id="btn-thermomix" class="px-3 py-1 rounded-full text-sm font-semibold bg-gray-600 text-white transition-colors" onclick="setDevice('thermomix')">Thermomix</button>
-            <button id="btn-beko" class="px-3 py-1 rounded-full text-sm font-semibold text-gray-400 transition-colors" onclick="setDevice('beko')">Beko FitChef</button>
+    <!-- Premium Üst Bar -->
+    <header class="glass-panel z-10 flex flex-col pt-12 pb-4 px-5 shrink-0 rounded-b-3xl relative">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
+                <i class="ph-fill ph-cooking-pot neon-text text-3xl"></i> RoboMasterChef
+            </h1>
+        </div>
+        
+        <!-- Dolgun Cihaz Seçim Butonları -->
+        <div class="flex bg-black/40 rounded-2xl p-1.5 border border-white/10 w-full relative">
+            <button id="btn-thermomix" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all" onclick="setDevice('thermomix')">Thermomix</button>
+            <button id="btn-beko" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all" onclick="setDevice('beko')">Beko ThermoExpert</button>
         </div>
     </header>
 
     <!-- Ana Ekran (Arama ve Listeleme) -->
-    <main id="main-view" class="flex-1 overflow-y-auto p-4 hide-scrollbar">
-        <!-- Arama ve Görünüm Kontrolleri -->
-        <div class="mb-6 flex gap-2">
+    <main id="main-view" class="flex-1 overflow-y-auto p-5 hide-scrollbar relative">
+        
+        <!-- Dolgun Arama Çubuğu -->
+        <div class="mb-6 flex gap-3 sticky top-0 z-10 pt-2">
             <div class="relative flex-1">
-                <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400 text-xl"></i>
-                <input type="text" id="search-input" placeholder="Tarif veya malzeme ara..." class="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-[#00E676] transition-colors">
+                <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-xl"></i>
+                <input type="text" id="search-input" placeholder="Tarif veya malzeme ara..." class="w-full glass-card rounded-2xl py-3.5 pl-12 pr-4 text-white text-base focus:outline-none focus:border-[#00E676]/50 placeholder-gray-500 transition-colors shadow-lg">
             </div>
-            <button onclick="toggleView()" class="glass-card w-12 rounded-xl flex items-center justify-center text-2xl">
-                <i id="view-icon" class="ph ph-squares-four"></i>
+            <button onclick="toggleView()" class="glass-card w-14 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                <i id="view-icon" class="ph ph-squares-four text-gray-300"></i>
             </button>
         </div>
 
-        <!-- Tarif Konteyneri -->
-        <div id="recipe-container" class="grid-view pb-10">
-            <!-- Tarifler buraya JavaScript ile JSON'dan basılacak -->
+        <div id="recipe-container" class="grid-view pb-20">
+            <!-- Tarifler JSON'dan Basılacak -->
         </div>
     </main>
 
-    <!-- Tarif Detay Sayfası (Sağdan Kayarak Açılır) -->
-    <div id="recipe-detail" class="fixed inset-0 bg-[#121212] z-50 flex flex-col h-full overflow-hidden">
-        <div class="glass-card p-4 flex items-center gap-3 shrink-0">
-            <button onclick="closeRecipe()" class="text-2xl p-1"><i class="ph ph-caret-left"></i></button>
-            <h2 id="detail-title" class="text-xl font-bold flex-1 truncate">Tarif Adı</h2>
+    <!-- Ferah ve Geniş Tarif Detay Sayfası -->
+    <div id="recipe-detail" class="fixed inset-0 bg-[#0d0d12]/95 backdrop-blur-2xl z-50 flex flex-col h-full overflow-hidden">
+        
+        <!-- Detay Sayfası Üst Bar -->
+        <div class="glass-panel pt-12 pb-4 px-4 flex items-center gap-4 shrink-0 rounded-b-3xl">
+            <button onclick="closeRecipe()" class="glass-card p-2.5 rounded-full text-2xl"><i class="ph ph-caret-left"></i></button>
+            <h2 id="detail-title" class="text-xl font-bold flex-1 truncate tracking-tight">Tarif Adı</h2>
         </div>
-        <div class="flex-1 overflow-y-auto p-4 hide-scrollbar" id="detail-content">
+        
+        <!-- Detay İçeriği (Geniş Yazılar, Ferah Aralıklar) -->
+        <div class="flex-1 overflow-y-auto p-5 hide-scrollbar" id="detail-content">
             <!-- Detaylar Buraya Gelecek -->
         </div>
     </div>
@@ -65,21 +107,31 @@
         let isGridView = true;
         let allRecipes = [];
 
-        // Cihaza özel terim sözlüğü
+        // Yeni, Kapsamlı Cihaz Sözlüğü
         const dictionary = {
-            thermomix: { "{{varoma}}": "Varoma", "{{ters_bicak}}": "Ters Bıçak", "{{kasik_hizi}}": "Kaşık Hızı" },
-            beko: { "{{varoma}}": "Buhar Tepsisi", "{{ters_bicak}}": "Çok Amaçlı Bıçak", "{{kasik_hizi}}": "Hız 1" }
+            thermomix: { 
+                "{{buhar_unitesi}}": "Varoma", 
+                "{{ic_sepet}}": "Süzgeç", 
+                "{{ters_bicak}}": "Ters Bıçak", 
+                "{{kasik_hizi}}": "Kaşık Hızı",
+                "{{cirpici}}": "Kelebek Çırpıcı"
+            },
+            beko: { 
+                "{{buhar_unitesi}}": "Buhar Sepeti", 
+                "{{ic_sepet}}": "Pişirme Sepeti", 
+                "{{ters_bicak}}": "Ters Dönüş", 
+                "{{kasik_hizi}}": "Hız 1",
+                "{{cirpici}}": "Çırpma Aparatı"
+            }
         };
 
         const icons = {
-            thermomix: { "{{varoma}}": "<i class='ph ph-cloud-arrow-up neon-accent'></i>", "{{ters_bicak}}": "<i class='ph ph-arrows-left-right neon-accent'></i>", "{{kasik_hizi}}": "<i class='ph ph-spoon neon-accent'></i>" },
-            beko: { "{{varoma}}": "<i class='ph ph-cloud-sun neon-accent'></i>", "{{ters_bicak}}": "<i class='ph ph-knife neon-accent'></i>", "{{kasik_hizi}}": "<i class='ph ph-number-circle-one neon-accent'></i>" }
+            thermomix: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-arrow-up neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-basket neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrows-left-right neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-spoon neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-spiral neon-text text-xl'></i>" },
+            beko: { "{{buhar_unitesi}}": "<i class='ph-fill ph-cloud-sun neon-text text-xl'></i>", "{{ic_sepet}}": "<i class='ph-fill ph-shopping-cart-simple neon-text text-xl'></i>", "{{ters_bicak}}": "<i class='ph-fill ph-arrow-u-down-left neon-text text-xl'></i>", "{{kasik_hizi}}": "<i class='ph-fill ph-number-circle-one neon-text text-xl'></i>", "{{cirpici}}": "<i class='ph-fill ph-tornado neon-text text-xl'></i>" }
         };
 
-        // Yüklenmesi gereken JSON dosyaları
-        const dataFiles = ['data/turk_mutfagi.json', 'data/hamur_isleri.json'];
+        const dataFiles = ['data/turk_mutfagi.json'];
 
-        // JSON Verilerini Çekme
         async function loadRecipes() {
             allRecipes = [];
             for (let file of dataFiles) {
@@ -88,13 +140,13 @@
                     const data = await response.json();
                     allRecipes = allRecipes.concat(data);
                 } catch (error) {
-                    console.log(file + " henüz yüklenmedi veya bulunamadı.");
+                    console.log(file + " henüz eklenmedi.");
                 }
             }
             renderRecipes(allRecipes);
         }
 
-        // Levenshtein (Fuzzy Search - Hata Toleranslı Arama) Fonksiyonu
+        // Akıllı Arama
         function getEditDistance(a, b) {
             if (a.length === 0) return b.length;
             if (b.length === 0) return a.length;
@@ -103,12 +155,8 @@
             for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
             for (let j = 1; j <= b.length; j++) {
                 for (let i = 1; i <= a.length; i++) {
-                    const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-                    matrix[j][i] = Math.min(
-                        matrix[j][i - 1] + 1, // silme
-                        matrix[j - 1][i] + 1, // ekleme
-                        matrix[j - 1][i - 1] + indicator // yer değiştirme
-                    );
+                    const ind = a[i - 1] === b[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(matrix[j][i - 1] + 1, matrix[j - 1][i] + 1, matrix[j - 1][i - 1] + ind);
                 }
             }
             return matrix[b.length][a.length];
@@ -117,10 +165,8 @@
         document.getElementById('search-input').addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             if(!query) { renderRecipes(allRecipes); return; }
-            
             const filtered = allRecipes.filter(r => {
                 const titleMatch = r.title.toLowerCase().includes(query);
-                // Eğer doğrudan içeriyorsa veya kelime hatası 2 harften azsa kabul et
                 const fuzzyMatch = r.title.toLowerCase().split(' ').some(word => getEditDistance(word, query) <= 2);
                 return titleMatch || fuzzyMatch;
             });
@@ -129,13 +175,15 @@
 
         function setDevice(device) {
             currentDevice = device;
-            document.getElementById('btn-thermomix').className = `px-3 py-1 rounded-full text-sm font-semibold transition-colors ${device === 'thermomix' ? 'bg-gray-600 text-white' : 'text-gray-400'}`;
-            document.getElementById('btn-beko').className = `px-3 py-1 rounded-full text-sm font-semibold transition-colors ${device === 'beko' ? 'bg-gray-600 text-white' : 'text-gray-400'}`;
-            // Detay sayfası açıksa anında çeviriyi uygula
+            const activeClass = "flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#00E676]/20 border border-[#00E676]/30 shadow-sm transition-all";
+            const inactiveClass = "flex-1 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-all";
+            
+            document.getElementById('btn-thermomix').className = device === 'thermomix' ? activeClass : inactiveClass;
+            document.getElementById('btn-beko').className = device === 'beko' ? activeClass : inactiveClass;
+            
             if(document.getElementById('recipe-detail').classList.contains('active')) {
                 const currentId = document.getElementById('recipe-detail').getAttribute('data-id');
-                const recipe = allRecipes.find(r => r.id === currentId);
-                if(recipe) openRecipe(currentId);
+                if(currentId) openRecipe(currentId);
             }
         }
 
@@ -143,14 +191,9 @@
             isGridView = !isGridView;
             const container = document.getElementById('recipe-container');
             const icon = document.getElementById('view-icon');
-            if (isGridView) {
-                container.className = 'grid-view pb-10';
-                icon.className = 'ph ph-squares-four';
-            } else {
-                container.className = 'list-view pb-10';
-                icon.className = 'ph ph-list';
-            }
-            renderRecipes(allRecipes); // Yeniden çiz
+            container.className = isGridView ? 'grid-view pb-20' : 'list-view pb-20';
+            icon.className = isGridView ? 'ph ph-squares-four text-gray-300' : 'ph ph-list text-gray-300';
+            renderRecipes(allRecipes);
         }
 
         function translateText(text) {
@@ -159,7 +202,7 @@
             const iconDict = icons[currentDevice];
             for (const key in dict) {
                 const regex = new RegExp(key, "g");
-                translated = translated.replace(regex, `<span class="font-bold text-white inline-flex items-center gap-1">${iconDict[key]} ${dict[key]}</span>`);
+                translated = translated.replace(regex, `<span class="font-bold text-white bg-white/10 px-2 py-0.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm mx-1">${iconDict[key]} ${dict[key]}</span>`);
             }
             return translated;
         }
@@ -169,25 +212,25 @@
             container.innerHTML = '';
             
             if(recipesToRender.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-10">Sonuç bulunamadı...</div>`;
+                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 mt-10 glass-card rounded-3xl p-6">Aradığınız tarif bulunamadı.</div>`;
                 return;
             }
 
             recipesToRender.forEach(recipe => {
                 const card = document.createElement('div');
-                card.className = `glass-card rounded-2xl overflow-hidden cursor-pointer active:scale-95 transition-transform ${!isGridView ? 'flex h-32' : ''}`;
+                card.className = `glass-card rounded-3xl overflow-hidden cursor-pointer ${!isGridView ? 'flex h-36' : 'flex flex-col'}`;
                 card.onclick = () => openRecipe(recipe.id);
                 
-                const imgClass = isGridView ? 'w-full h-32 object-cover' : 'w-32 h-full object-cover shrink-0';
-                const bodyClass = isGridView ? 'p-3' : 'p-3 flex flex-col justify-center flex-1 min-w-0';
+                const imgClass = isGridView ? 'w-full h-40 object-cover rounded-t-3xl' : 'w-36 h-full object-cover shrink-0 rounded-l-3xl';
+                const bodyClass = isGridView ? 'p-4' : 'p-4 flex flex-col justify-center flex-1 min-w-0';
 
                 card.innerHTML = `
-                    <img src="${recipe.image || 'https://via.placeholder.com/300x200/1e1e1e/00e676?text=RoboChef'}" class="${imgClass}">
+                    <img src="${recipe.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=600&auto=format&fit=crop'}" class="${imgClass}">
                     <div class="${bodyClass}">
-                        <div class="text-xs text-[#00E676] font-semibold mb-1">${recipe.category}</div>
-                        <h3 class="font-bold truncate text-lg">${recipe.title}</h3>
-                        <div class="text-sm text-gray-400 mt-2 flex items-center gap-2">
-                            <i class="ph ph-clock"></i> ${recipe.cookTime}
+                        <div class="text-xs uppercase tracking-wider text-[#00E676] font-bold mb-1.5">${recipe.category}</div>
+                        <h3 class="font-bold truncate text-lg text-white mb-2">${recipe.title}</h3>
+                        <div class="text-sm text-gray-400 flex items-center gap-2 font-medium">
+                            <i class="ph-fill ph-clock text-gray-300"></i> ${recipe.cookTime}
                         </div>
                     </div>
                 `;
@@ -203,29 +246,32 @@
             document.getElementById('recipe-detail').setAttribute('data-id', id);
             
             let html = `
-                <img src="${recipe.image || 'https://via.placeholder.com/600x400/1e1e1e/00e676?text=RoboChef'}" class="w-full h-48 object-cover rounded-xl mb-4">
+                <div class="relative mb-6">
+                    <img src="${recipe.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop'}" class="w-full h-64 object-cover rounded-3xl shadow-2xl">
+                    <div class="absolute bottom-4 right-4 glass-panel px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg flex items-center gap-1"><i class="ph-fill ph-users"></i> ${recipe.portions}</div>
+                </div>
                 
-                <div class="flex gap-4 mb-6">
-                    <div class="glass-card rounded-xl p-3 flex-1 text-center"><div class="text-gray-400 text-xs mb-1">Porsiyon</div><div class="font-bold">${recipe.portions}</div></div>
-                    <div class="glass-card rounded-xl p-3 flex-1 text-center"><div class="text-gray-400 text-xs mb-1">Hazırlık</div><div class="font-bold">${recipe.prepTime}</div></div>
-                    <div class="glass-card rounded-xl p-3 flex-1 text-center"><div class="text-gray-400 text-xs mb-1">Pişirme</div><div class="font-bold">${recipe.cookTime}</div></div>
+                <div class="flex gap-3 mb-8">
+                    <div class="glass-card rounded-2xl p-4 flex-1 text-center shadow-lg"><div class="text-gray-400 text-xs uppercase tracking-wide mb-1.5 font-semibold">Hazırlık</div><div class="font-bold text-lg text-white">${recipe.prepTime}</div></div>
+                    <div class="glass-card rounded-2xl p-4 flex-1 text-center shadow-lg"><div class="text-gray-400 text-xs uppercase tracking-wide mb-1.5 font-semibold">Pişirme</div><div class="font-bold text-lg text-white">${recipe.cookTime}</div></div>
                 </div>
 
-                <h3 class="text-lg font-bold mb-3 neon-accent flex items-center gap-2"><i class="ph ph-basket"></i> Malzemeler</h3>
-                <ul class="glass-card rounded-xl p-4 mb-6 space-y-3">
+                <h3 class="text-xl font-bold mb-4 text-white flex items-center gap-2"><i class="ph-fill ph-basket neon-text"></i> Malzemeler</h3>
+                <ul class="glass-card rounded-3xl p-5 mb-8 space-y-4 shadow-lg">
                     ${recipe.ingredients.map(ing => `
-                        <li class="flex justify-between border-b border-gray-700/50 pb-2 last:border-0 last:pb-0">
-                            <span>${ing.name}</span><span class="text-gray-300 font-medium">${ing.amount}</span>
+                        <li class="flex justify-between items-center border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                            <span class="text-base text-gray-200">${ing.name}</span>
+                            <span class="text-white font-bold bg-white/10 px-3 py-1 rounded-lg">${ing.amount}</span>
                         </li>
                     `).join('')}
                 </ul>
 
-                <h3 class="text-lg font-bold mb-3 neon-accent flex items-center gap-2"><i class="ph ph-cooking-pot"></i> Hazırlık Adımları</h3>
-                <div class="glass-card rounded-xl p-4 space-y-4 mb-10">
+                <h3 class="text-xl font-bold mb-4 text-white flex items-center gap-2"><i class="ph-fill ph-cooking-pot neon-text"></i> Hazırlık Adımları</h3>
+                <div class="glass-card rounded-3xl p-6 space-y-8 mb-20 shadow-lg">
                     ${recipe.steps.map((step, index) => `
-                        <div class="flex gap-3">
-                            <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">${index + 1}</div>
-                            <p class="text-gray-200 leading-relaxed text-sm">${translateText(step)}</p>
+                        <div class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full neon-bg flex items-center justify-center text-sm font-extrabold shrink-0 mt-1 shadow-md">${index + 1}</div>
+                            <p class="text-gray-200 text-lg leading-relaxed">${translateText(step)}</p>
                         </div>
                     `).join('')}
                 </div>
@@ -239,7 +285,6 @@
             document.getElementById('recipe-detail').classList.remove('active');
         }
 
-        // Uygulama başladığında JSON'ları yükle
         loadRecipes();
     </script>
 </body>
