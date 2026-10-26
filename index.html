@@ -13,9 +13,9 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
         }
         .glass-panel { 
-            background: rgba(255, 255, 255, 0.02); 
+            background: rgba(17, 24, 39, 0.85); 
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
         .glass-card {
@@ -30,7 +30,11 @@
         .accent-text { color: #00B5E2; }
         .accent-bg { background-color: #00B5E2; color: #ffffff; box-shadow: 0 4px 15px rgba(0, 181, 226, 0.35); }
         
-        #recipe-detail { transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); transform: translateX(100%); }
+        #recipe-detail { 
+            background: #111827 !important; 
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); 
+            transform: translateX(100%); 
+        }
         #recipe-detail.active { transform: translateX(0); }
         .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.25rem; }
         .list-view { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -41,29 +45,17 @@
 <body class="antialiased h-screen overflow-hidden flex flex-col pb-safe">
 
     <!-- Üst Bar -->
-    <header class="glass-panel z-10 flex flex-col pt-12 pb-4 px-5 shrink-0 rounded-b-3xl relative border-b border-white/5">
-        <div class="flex justify-between items-center mb-1">
+    <header class="glass-panel z-10 flex flex-col pt-12 pb-4 px-5 shrink-0 rounded-b-3xl relative">
+        <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2 text-white">
                 <i class="ph-fill ph-cooking-pot accent-text text-3xl"></i> RoboMasterChef
             </h1>
         </div>
-        <p class="text-sm text-gray-400 font-medium tracking-wide">Akıllı Mutfak Asistanı</p>
     </header>
 
     <!-- Ana Ekran -->
     <main id="main-view" class="flex-1 overflow-y-auto p-5 hide-scrollbar relative">
         
-        <!-- Şık Banner (Marka İsmi İçermez) -->
-        <div class="mb-6 relative rounded-3xl overflow-hidden shadow-2xl glass-card h-44 flex items-center border border-white/10">
-            <img src="https://images.unsplash.com/photo-1556910103-1c02745a8281?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
-            <div class="absolute inset-0 bg-gradient-to-r from-[#111827]/90 to-transparent"></div>
-            <div class="relative z-10 p-6 w-full h-full flex flex-col justify-center">
-                <div class="text-[10px] uppercase tracking-widest accent-text font-bold mb-1">Yeni Nesil Pişirme Teknolojisi</div>
-                <h2 class="text-2xl font-bold text-white mb-1 leading-tight">Lezzetin Ritmi<br>Değişti.</h2>
-                <p class="text-xs text-gray-300">Akıllı tariflerle kusursuz sonuçlar.</p>
-            </div>
-        </div>
-
         <div class="mb-5 flex gap-3 sticky top-0 z-10 pt-2 bg-[#111827]/90 backdrop-blur-xl pb-3 -mx-5 px-5">
             <div class="relative flex-1">
                 <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-xl"></i>
@@ -84,13 +76,13 @@
         <div id="recipe-container" class="grid-view pb-20 hidden"></div>
     </main>
 
-    <!-- Tarif Detay Sayfası -->
-    <div id="recipe-detail" class="fixed inset-0 bg-[#111827]/98 backdrop-blur-3xl z-50 flex flex-col h-full overflow-hidden">
-        <div class="glass-panel pt-12 pb-4 px-4 flex items-center gap-4 shrink-0 rounded-b-3xl border-b border-white/5">
-            <button onclick="closeRecipe()" class="glass-card p-2.5 rounded-full text-2xl hover:bg-white/10 transition-colors"><i class="ph ph-caret-left"></i></button>
+    <!-- Tarif Detay Sayfası (Tamamen Koyu Arka Plan) -->
+    <div id="recipe-detail" class="fixed inset-0 z-50 flex flex-col h-full overflow-hidden">
+        <div class="glass-panel pt-12 pb-4 px-4 flex items-center gap-4 shrink-0 rounded-b-3xl">
+            <button onclick="closeRecipe()" class="glass-card p-2.5 rounded-full text-2xl hover:bg-white/10 transition-colors text-white"><i class="ph ph-caret-left"></i></button>
             <h2 id="detail-title" class="text-xl font-bold flex-1 truncate tracking-tight text-white">Tarif Adı</h2>
         </div>
-        <div class="flex-1 overflow-y-auto p-5 hide-scrollbar" id="detail-content"></div>
+        <div class="flex-1 overflow-y-auto p-5 hide-scrollbar bg-[#111827]" id="detail-content"></div>
     </div>
 
     <script>
@@ -140,7 +132,7 @@
             const results = await Promise.all(fetchPromises);
             results.forEach(data => { if(data.length > 0) allRecipes = allRecipes.concat(data); });
             
-            // EĞER JSON DOSYALARI HENÜZ YÜKLENmediyse TEST AMAÇLI ÖRNEK TARİF AT (Sayfa boş kalmasın)
+            // Eğer JSON henüz yüklenmediyse örnek tam tarif
             if (allRecipes.length === 0) {
                 allRecipes = [{
                     "id": "trk_sucuklu_fasulye",
@@ -149,17 +141,26 @@
                     "prepTime": "20 dk",
                     "cookTime": "1 sa 30 dk",
                     "portions": "4 Porsiyon",
-                    "image": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=800&auto=format&fit=crop",
+                    "image": "",
                     "nutrition": { "kalori": "198.1 kcal", "protein": "6.1 g", "karbonhidrat": "9.5 g", "yag": "15.9 g" },
                     "ingredients": [
                         { "name": "Kuru fasulye (dermason cinsi)", "amount": "200 g" },
                         { "name": "Su", "amount": "2550 g" },
+                        { "name": "Biber salçası", "amount": "25 g" },
                         { "name": "Soğan", "amount": "120 g" },
-                        { "name": "Tereyağı", "amount": "40 g" }
+                        { "name": "Tereyağı", "amount": "40 g" },
+                        { "name": "Domates", "amount": "200 g" },
+                        { "name": "Tuz", "amount": "3/4 tk" },
+                        { "name": "Karabiber", "amount": "1/4 tk" },
+                        { "name": "Şeker", "amount": "1/2 tk" },
+                        { "name": "Sucuk", "amount": "70 g" }
                     ],
                     "steps": [
-                        "Soğan ve tereyağını karıştırma kabına koyun. 3 saniye / {{hiz_6}} ayarında doğrayın.",
-                        "Pişirme sepetini ({{ic_sepet}}) yerleştirip fasulyeleri ekleyin. 65 dakika / {{buhar_unitesi}} / {{hiz_1}} ayarında pişirin."
+                        "Karıştırma kabı kapağına geniş bir kase koyup içinde 200 g dermason fasulye ve 1500 g suyu tartın. Fasulyeleri 1 gece (yaklaşık 8-10 saat) ıslatın. Süzdürüp durulayın ve kenara kaldırın.",
+                        "Soğan, tereyağı ve salçayı karıştırma kabına koyun. 3 saniye / {{hiz_6}} ayarında doğrayın. Kenarları spatula ile sıyırıp 7 dakika / 100°C / {{kasik_hizi}} ayarında pişirin.",
+                        "Domatesi ekleyip 5 saniye / {{hiz_7}} ayarında karıştırın.",
+                        "Tuz, karabiber, şeker ve 900 g suyu karıştırma kabına ekleyin. Pişirme sepetini ({{ic_sepet}}) yerleştirip fasulyeleri sepete koyun. 65 dakika / {{buhar_unitesi}} / {{hiz_1}} ayarında pişirin.",
+                        "Pişirme sepetini spatula yardımıyla çıkarıp fasulyeleri kaseye aktarın. Sucuk, 150 g su ve fasulyeleri karıştırma kabına ekleyip 15 dakika / 120°C / {{ters_bicak}} / {{kasik_hizi}} ayarında pişirin."
                     ]
                 }];
             }
@@ -253,11 +254,15 @@
                 card.className = `glass-card rounded-3xl overflow-hidden cursor-pointer ${!isGridView ? 'flex h-36' : 'flex flex-col'}`;
                 card.onclick = () => openRecipe(recipe.id);
                 
-                const imgClass = isGridView ? 'w-full h-40 object-cover rounded-t-3xl' : 'w-36 h-full object-cover shrink-0 rounded-l-3xl';
+                // Eğer resim yoksa otomatik şık logo kutusu göster
+                const imgContent = recipe.image ? 
+                    `<img src="${recipe.image}" class="${isGridView ? 'w-full h-40 object-cover rounded-t-3xl' : 'w-36 h-full object-cover shrink-0 rounded-l-3xl'}">` :
+                    `<div class="${isGridView ? 'w-full h-40 rounded-t-3xl' : 'w-36 h-full shrink-0 rounded-l-3xl'} bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-white/5"><i class="ph-fill ph-cooking-pot accent-text text-4xl"></i></div>`;
+
                 const bodyClass = isGridView ? 'p-4' : 'p-4 flex flex-col justify-center flex-1 min-w-0';
 
                 card.innerHTML = `
-                    <img src="${recipe.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=600&auto=format&fit=crop'}" class="${imgClass}">
+                    ${imgContent}
                     <div class="${bodyClass}">
                         <div class="text-[10px] uppercase tracking-widest accent-text font-bold mb-1.5">${recipe.category}</div>
                         <h3 class="font-bold truncate text-lg text-white mb-2">${recipe.title}</h3>
@@ -290,11 +295,12 @@
                 `;
             }
 
+            const headerMedia = recipe.image ? 
+                `<div class="relative mb-6"><img src="${recipe.image}" class="w-full h-64 object-cover rounded-3xl shadow-2xl"><div class="absolute bottom-4 right-4 glass-panel px-3.5 py-1.5 rounded-xl text-sm font-bold shadow-lg flex items-center gap-1.5 border border-white/10"><i class="ph-fill ph-users accent-text"></i> ${recipe.portions}</div></div>` :
+                `<div class="relative mb-6 h-48 rounded-3xl bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col items-center justify-center border border-white/10 shadow-2xl"><i class="ph-fill ph-cooking-pot accent-text text-6xl mb-2"></i><span class="text-xs text-gray-400 uppercase tracking-widest font-bold">RoboMasterChef Özel Reçete</span><div class="absolute bottom-4 right-4 glass-panel px-3.5 py-1.5 rounded-xl text-sm font-bold shadow-lg flex items-center gap-1.5 border border-white/10"><i class="ph-fill ph-users accent-text"></i> ${recipe.portions}</div></div>`;
+
             let html = `
-                <div class="relative mb-6">
-                    <img src="${recipe.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop'}" class="w-full h-64 object-cover rounded-3xl shadow-2xl">
-                    <div class="absolute bottom-4 right-4 glass-panel px-3.5 py-1.5 rounded-xl text-sm font-bold shadow-lg flex items-center gap-1.5 border border-white/10"><i class="ph-fill ph-users accent-text"></i> ${recipe.portions}</div>
-                </div>
+                ${headerMedia}
                 
                 <div class="flex gap-3 mb-8">
                     <div class="glass-card rounded-2xl p-4 flex-1 text-center border border-white/5"><div class="text-gray-400 text-[10px] uppercase tracking-widest mb-1.5 font-bold">Hazırlık</div><div class="font-bold text-lg text-white">${recipe.prepTime}</div></div>
